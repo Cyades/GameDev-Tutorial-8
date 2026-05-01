@@ -11,6 +11,10 @@ const DECELERATION = 400.0
 @onready var animator = self.get_node("Animator")
 @onready var sprite = self.get_node("Sprite2D")
 @onready var particle = $GPUParticles2D
+@onready var health_label = $CanvasLayer/MarginContainer/HealthLabel
+
+var health: int = 3
+var is_invulnerable: bool = false
 
 
 func get_input():
@@ -33,7 +37,30 @@ func _physics_process(delta):
 	set_velocity(velocity)
 	set_up_direction(UP)
 	move_and_slide()
+	
+	if not is_invulnerable:
+		for i in get_slide_collision_count():
+			var collision = get_slide_collision(i)
+			if collision.get_collider():
+				if collision.get_collider().name.find("Enemy") != -1:
+					take_damage()
+					break
+	
 	velocity = velocity
+
+func take_damage():
+	health -= 1
+	if health_label:
+		health_label.text = "Nyawa: " + str(health)
+	
+	if health <= 0:
+		get_tree().change_scene_to_file("res://scenes/Game Over.tscn")
+	else:
+		is_invulnerable = true
+		modulate.a = 0.5
+		await get_tree().create_timer(1.0).timeout
+		modulate.a = 1.0
+		is_invulnerable = false
 
 
 func _process(_delta):

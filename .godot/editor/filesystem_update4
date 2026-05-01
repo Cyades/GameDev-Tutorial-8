@@ -4,3 +4,4 @@ res://scripts/Player.gd
 res://scenes/Player.tscn
 res://scenes/Spawner.tscn
 res://scripts/Spawner.gd
+res://scripts/AreaTrigger.gd
